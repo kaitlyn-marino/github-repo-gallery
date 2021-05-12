@@ -1,7 +1,9 @@
 //targeting profile information
 const profile = document.querySelector(".overview");
-
+//global variables
 const username = `kaitlyn-marino`;
+const displayReposList = document.querySelector(".repo-list");
+
 
 //fetching information from GitHub profile
 const getProfileInfo = async function () {
@@ -13,6 +15,7 @@ const getProfileInfo = async function () {
 
 getProfileInfo();
 
+//displaying profile information 
 const fetchedUserInfo = function (data) {
     const div = document.createElement("div");
     div.classList.add("user-info");
@@ -26,4 +29,24 @@ const fetchedUserInfo = function (data) {
                         <p><strong>Number of public repos:</strong> ${data.public_repos}</p>
                     </div>`;
     profile.append(div);
+    getRepos();
 };
+
+//fetching repos
+const getRepos = async function () {
+    const fetchRepos = await fetch(`https://api.github.com/users/${username}/repos?sort=updated&per_page=100`);
+    const repoData = await fetchRepos.json();
+    //console.log(repoData);
+    fetchedRepoInfo(repoData);
+};
+
+//displaying repos
+const fetchedRepoInfo = function (repos) {
+    for (const repo of repos ) {
+        const li = document.createElement("li");
+        li.classList.add("repo");
+        li.innerHTML = `<h3>${repo.name}</h3>`;
+        displayReposList.append(li);
+    }
+};
+
