@@ -1,8 +1,11 @@
 //targeting profile information
 const profile = document.querySelector(".overview");
+
 //global variables
 const username = `kaitlyn-marino`;
 const displayReposList = document.querySelector(".repo-list");
+const reposSection = document.querySelector(".repos");
+const repoDataSection = document.querySelector(".repo-data");
 
 
 //fetching information from GitHub profile
@@ -49,4 +52,45 @@ const fetchedRepoInfo = function (repos) {
         displayReposList.append(li);
     }
 };
+
+//event listener for each repo to display further details
+displayReposList.addEventListener("click", function(e) {
+    if (e.target.matches("h3")) {
+        const repoName = e.target.innerText;
+        specificRepoInfo(repoName);
+    }
+});
+
+//fetching details about each specific repo to display once clicked on
+const specificRepoInfo = async function (repoName) {
+    const fetchDetails = await fetch(`https://api.github.com/repos/${username}/${repoName}`);
+    const repoInfo = await fetchDetails.json();
+    //console.log(repoInfo);
+    const fetchLanguages = await fetch(`https://api.github.com/repos/kaitlyn-marino/github-repo-gallery/languages`);
+    const languageData = await fetchLanguages.json();
+    //console.log(languageData);
+    const languages = [];
+    for (language in languageData) {
+        languages.push(language);
+    }
+    //console.log(languages);
+    displayRepoInfo(repoInfo, languages);
+};
+
+//displaying specific details of repo
+const displayRepoInfo = function (repoInfo, languages) {
+    repoDataSection.innerHTML = "";
+    repoDataSection.classList.remove("hide");
+    reposSection.classList.add("hide");
+    const div = document.createElement("div");
+    div.classList.add("repo-display-data");
+    div.innerHTML = `<h3>Name: ${repoInfo.name}</h3>
+                    <p>Description: ${repoInfo.description}</p>
+                    <p>Default Branch: ${repoInfo.default_branch}</p>
+                    <p>Languages: ${languages.join(", ")}</p>
+                    <a class="visit" href="${repoInfo.html_url}" target="_blank" rel="noreferrer noopener">View Repo on Github!</a>
+                    `
+    repoDataSection.append(div);
+};
+
 
