@@ -6,6 +6,8 @@ const username = `kaitlyn-marino`;
 const displayReposList = document.querySelector(".repo-list");
 const reposSection = document.querySelector(".repos");
 const repoDataSection = document.querySelector(".repo-data");
+const backToRepoButton = document.querySelector(".view-repos");
+const filterInput = document.querySelector(".filter-repos");
 
 
 //fetching information from GitHub profile
@@ -45,6 +47,7 @@ const getRepos = async function () {
 
 //displaying repos
 const fetchedRepoInfo = function (repos) {
+    filterInput.classList.remove("hide");
     for (const repo of repos ) {
         const li = document.createElement("li");
         li.classList.add("repo");
@@ -91,6 +94,30 @@ const displayRepoInfo = function (repoInfo, languages) {
                     <a class="visit" href="${repoInfo.html_url}" target="_blank" rel="noreferrer noopener">View Repo on Github!</a>
                     `
     repoDataSection.append(div);
+    backToRepoButton.classList.remove("hide");
 };
+
+//click event for when the user is on the details page to get back to the home page
+backToRepoButton.addEventListener("click", function() {
+    reposSection.classList.remove("hide");
+    repoDataSection.classList.add("hide");
+    backToRepoButton.classList.add("hide");
+});
+
+//adding input event to the search box
+filterInput.addEventListener("input", function (e) {
+   const searchValue = e.target.value;
+   //console.log(searchValue);
+   const repos = document.querySelectorAll(".repo");
+   const lowercaseValue = searchValue.toLowerCase();
+   for(repo of repos) {
+       const lowercaseInnerText = repo.innerText.toLowerCase();
+       if (lowercaseInnerText.includes(lowercaseValue)) {
+            repo.classList.remove("hide");
+       } else {
+            repo.classList.add("hide");
+       }
+   }
+});
 
 
